@@ -35,12 +35,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. LOAD ASSETS ---
+# --- 2. LOAD ASSETS (Updated path to load from root directory) ---
 @st.cache_resource
 def load_assets():
-    with open('models/churn_model.pkl', 'rb') as f:
+    with open('churn_model.pkl', 'rb') as f:
         model = pickle.load(f)
-    with open('models/label_encoder.pkl', 'rb') as f:
+    with open('label_encoder.pkl', 'rb') as f:
         le = pickle.load(f)
     return model, le
 
@@ -125,7 +125,6 @@ with tab1:
 
         with col_res2:
             st.subheader("📊 Feature Risk Breakdown")
-            # Displaying a clean bar chart of inputs instead of SHAP to prevent server errors
             feat_df = pd.DataFrame({
                 'Feature': ['Tenure', 'Monthly Charges', 'Support Tickets'],
                 'Value': [tenure, monthly_charges, support_tickets * 10]
