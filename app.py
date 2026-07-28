@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
-import shap
 import matplotlib.pyplot as plt
 import os
 from reportlab.lib.pagesizes import letter
@@ -58,7 +57,7 @@ df_global = load_dataset()
 
 # --- 3. EXECUTIVE SUMMARY KPI BAR ---
 st.title("🏢 Enterprise Customer Churn & LTV Intelligence Suite")
-st.markdown("Advanced Machine Learning & Explainable AI (XAI) for proactive customer retention.")
+st.markdown("Advanced Machine Learning for proactive customer retention.")
 
 if not df_global.empty:
     st.markdown("### 📊 Executive Portfolio Overview")
@@ -111,7 +110,6 @@ with tab1:
                     </div>
                 """, unsafe_allow_html=True)
                 
-                # Automated Action Trigger Simulator
                 if st.button("🚀 Trigger Automated Retention Campaign"):
                     st.success("Successfully sent automated 20% discount coupon & assigned Senior Account Manager!")
             else:
@@ -126,14 +124,15 @@ with tab1:
             st.metric(label="Calculated Customer Lifetime Value (LTV)", value=f"${ltv:,.2f}")
 
         with col_res2:
-            st.subheader("🔍 Explainable AI (SHAP Attribution)")
-            explainer = shap.TreeExplainer(model)
-            shap_values = explainer(input_data)
-            fig, ax = plt.subplots(figsize=(6, 4))
-            shap.plots.waterfall(shap_values[0], show=False)
-            st.pyplot(fig)
+            st.subheader("📊 Feature Risk Breakdown")
+            # Displaying a clean bar chart of inputs instead of SHAP to prevent server errors
+            feat_df = pd.DataFrame({
+                'Feature': ['Tenure', 'Monthly Charges', 'Support Tickets'],
+                'Value': [tenure, monthly_charges, support_tickets * 10]
+            })
+            st.bar_chart(feat_df.set_index('Feature'))
 
-        # --- FEATURE 4: PROFESSIONAL PDF REPORT GENERATION ---
+        # --- EXPORT EXECUTIVE PDF REPORT ---
         st.markdown("---")
         st.subheader("📄 Export Executive Stakeholder Report")
         
@@ -143,18 +142,15 @@ with tab1:
             styles = getSampleStyleSheet()
             elements = []
 
-            # PDF Title & Metadata
             elements.append(Paragraph("<b>Enterprise Customer Churn & LTV Assessment</b>", styles['Title']))
             elements.append(Paragraph(f"<b>Contract Type:</b> {contract_type} | <b>Tenure:</b> {tenure} Months", styles['Normal']))
             elements.append(Spacer(1, 12))
 
-            # Status Summary
             status_text = "HIGH RISK (Likely to Churn)" if prediction == 1 else "LOW RISK (Likely to Stay)"
             elements.append(Paragraph(f"<b>Prediction Status:</b> {status_text} (Probability: {max(churn_prob, stay_prob):.2f})", styles['Heading2']))
             elements.append(Paragraph(f"<b>Estimated Customer LTV:</b> ${ltv:,.2f}", styles['Normal']))
             elements.append(Spacer(1, 15))
 
-            # Recommendations
             elements.append(Paragraph("<b>Recommended Strategic Interventions:</b>", styles['Heading3']))
             rec_text = "Offer custom retention packages, assign specialized account management support, and review service pricing tiers." if prediction == 1 else "Continue regular check-ins and cross-selling premium add-on modules."
             elements.append(Paragraph(rec_text, styles['Normal']))
