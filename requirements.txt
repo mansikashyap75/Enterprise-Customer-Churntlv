@@ -2,9 +2,6 @@ streamlit
 pandas
 scikit-learn
 xgboost
-numpy<2.0
-numba==0.60.0
-shap==0.44.0
 reportlab
 matplotlib
 seaborn
